@@ -74,7 +74,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="hash_chn.cpp" />
     <ClCompile Include="main_driver.cpp" />
   </ItemGroup>
   <ItemGroup>

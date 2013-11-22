@@ -40,32 +40,103 @@
 //    int size( ) const; 
 // Postcondition: The return value is the number if records in the table.
 
-typedef int ItemType;
+
+#include <cassert>
+#include <cstdlib>
+using namespace std;
+
+//typedef int ItemType;
 const int CAPACITY = 31;
 
+template <typename ItemType>
 struct RecordType
 {
    int key;
    ItemType data;
 };
 
+template <typename ItemType>
 struct Node
 {
-   RecordType rec;
-   Node* next;
+   RecordType<ItemType> rec;
+   Node<ItemType>* next;
 };
 
+template <typename ItemType>
 class Table
 {
 public:
-   Table( );
-   void insert( const RecordType& entry );
-   void find( int key, bool& found, RecordType& result ) const; 
-   int size( ) const;
-private:
-   int hash( int key ) const;
-   void findPtr( int key, bool& found, Node*& ptr ) const;
-   Node* table[CAPACITY];
-   int used;
-};
 
+   Table( )
+   {
+	   used = 0;
+	   for ( int i = 0; i < CAPACITY; i++ )
+		  table[i] = NULL;
+	}
+
+   void insert( const RecordType<ItemType>& entry )
+   {
+	   bool alreadyThere;
+	   Node<ItemType>* nodePtr;
+
+	   assert( entry.key >= 0 );
+
+	   findPtr( entry.key, alreadyThere, nodePtr );
+	   if( !alreadyThere )
+	   {
+		   int i = hash( entry.key );      // get index of "bucket" where entry belongs
+		   // insert at beginning of list
+		   Node<ItemType>* temp = new Node<ItemType>;
+		   temp->rec = entry;      // copy record
+		   temp->next = table[i];
+		   table[i] = temp;
+		   used++;
+	   }
+	   else 
+	   {
+		   // nodePtr points to existing record that should be updated
+		   nodePtr->rec = entry;
+	   } 
+   }
+
+   void find( int key, bool& found, RecordType<ItemType>& result ) const
+   {
+	   Node<ItemType>* nodePtr;
+   
+	   assert( key >= 0 );
+   
+	   findPtr( key, found, nodePtr );
+	   if ( found )
+	   {
+		  result = nodePtr->rec;
+	   }
+   }
+
+   inline int size( ) const {return used;}
+
+private:
+   void findPtr( int key, bool& found, Node<ItemType>*& nodePtr ) const
+	{
+	   int i;
+	   Node<ItemType>* ptr;
+
+	   i = hash( key );
+	   ptr = table[i];
+	   found = false;
+	   while ( !found && ptr != NULL )
+	   {
+		  if ( key == ptr->rec.key )
+		  {
+			 found = true;
+			 nodePtr = ptr;
+		  }
+		  ptr = ptr->next;
+	   }   
+	   if ( !found )
+		  nodePtr = NULL;
+	}
+
+   inline int hash( int key ) const {return key % CAPACITY;}
+   Node<ItemType>* table[CAPACITY];
+   int used; 
+};

@@ -23,8 +23,8 @@ int main( )
 {
     //List test;     // A List to perform tests on
     char choice;   // Command entered by the user
-    Table dataTable;
-    RecordType rec;
+    Table<int> dataTable;
+    RecordType<int> rec;
     int key;
     bool found;
     int size;
@@ -42,7 +42,7 @@ int main( )
             case 'I': // insert
                       cout << "Enter key (int >= 0) for record: ";
                       cin >> rec.key;
-                      cout << "Enter data (int) for record: ";
+                      cout << "Enter data for record: ";
                       cin >> rec.data;
                       dataTable.insert( rec );
                       cout << "Record was inserted in table" << endl << endl;
